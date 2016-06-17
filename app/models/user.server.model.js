@@ -16,8 +16,7 @@ var UserSchema                  =   new Schema({
     	trim: true
     },
     password: {
-    	type: String,
-    	required: true,
+    	type: String,    	
     	validate: [
 			function(password){
 				return password && password.length > 6;
