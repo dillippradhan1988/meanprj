@@ -4,12 +4,12 @@ var express                     =   require('./config/express');
 var passport 					= 	require('./config/passport');
 
 var db                          =   mongoose();
-var app                         =   express();
+var app                         =   express(db);
 var passport 					= 	passport();
 
-app.set('port', process.env.PORT || 3000);
-app.listen(process.env.PORT || 3000);
+//app.set('port', process.env.PORT || 3000);
+app.listen(3000);
 
 module.exports                  =   app;
 
-console.log('Server running at http://localhost:'+app.get('port'));
+console.log('Server running at http://localhost:3000');

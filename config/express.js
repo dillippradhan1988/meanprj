@@ -1,16 +1,22 @@
 var config                      =   require('./config');
+var http                        =   require('http');
+var socketio                    =   require('socket.io');
 var express                     =   require('express');
 var morgan                      =   require('morgan');
 var compress                    =   require('compression');
 var bodyParser                  =   require('body-parser');
 var methodOverride              =   require('method-override');
 var session                     =   require('express-session');
+var MongoStore                  =   require('connect-mongo')(session);
 var flash                       =   require('connect-flash');
 var passport                    =   require('passport');
 
-module.exports                  =   function() {
+module.exports                  =   function(dbInstance) {
+
     var app                     =   express();
-    
+    var server                  =   http.createServer(app);
+    var io                      =   socketio.listen(server);
+
     app.use(express.static('./public'));
     
     if (process.env.NODE_ENV === 'development') {
@@ -22,11 +28,16 @@ module.exports                  =   function() {
     app.use(bodyParser.json());
     app.use(methodOverride());
     
+   var mongoStore              =   new MongoStore({
+        mongooseConnection: dbInstance.connection
+    });
+
     app.use(
         session({
             saveUninitialized: true,
             resave: true,
-            secret: config.sessionSecret
+            secret: config.sessionSecret,
+            store: mongoStore
         })
     );
 
@@ -40,6 +51,9 @@ module.exports                  =   function() {
     require('../app/routes/index.server.routes.js')(app);
     require('../app/routes/users.server.routes.js')(app);
     require('../app/routes/articles.server.routes.js')(app);
-    
-    return app;
+
+    require('./socketio')(server, io, mongoStore);
+
+    //return app;
+    return server;
 };

@@ -103,7 +103,7 @@ UserSchema.methods.authenticate = function(password) {
 	return this.password === this.hashPassword(password);
 };
 
-UserSchema.statics.findUniqueUsername = function(username, suffix, callback){
+UserSchema.statics.findUniqueUsernamea = function(username, suffix, callback){
 	var _this = this;
 	var possibleUsername = username + (suffix || '');
 	_this.findOne({
